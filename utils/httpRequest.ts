@@ -30,7 +30,6 @@ httpRequests.interceptors.response.use(
         if (error.response.data.error === "Unauthenticated") {
             // Handle unauthenticated error here ...
             await AsyncStorage.removeItem("user");
-            router.navigate("/(auth)/signIn");
         }
         throw error.response.data;
     }

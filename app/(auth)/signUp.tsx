@@ -93,33 +93,28 @@ const SignUp = () => {
             <Button
                 text="Register"
                 onPress={async () => {
+                    if (!fullName || !email || !password || !confirmPassword) {
+                        Toast.show({
+                            type: ALERT_TYPE.WARNING,
+                            title: "Warning",
+                            textBody: "Please fill all fields",
+                            titleStyle: { color: "black" },
+                            autoClose: true,
+                        });
+                        return;
+                    }
+                    if (password !== confirmPassword) {
+                        Toast.show({
+                            type: ALERT_TYPE.WARNING,
+                            title: "Warning",
+                            textBody:
+                                "Password and Confirm password do not match",
+                            titleStyle: { color: "black" },
+                            autoClose: true,
+                        });
+                        return;
+                    }
                     try {
-                        if (
-                            !fullName ||
-                            !email ||
-                            !password ||
-                            !confirmPassword
-                        ) {
-                            Toast.show({
-                                type: ALERT_TYPE.WARNING,
-                                title: "Warning",
-                                textBody: "Please fill all fields",
-                                titleStyle: { color: "black" },
-                                autoClose: true,
-                            });
-                            return;
-                        }
-                        if (password !== confirmPassword) {
-                            Toast.show({
-                                type: ALERT_TYPE.WARNING,
-                                title: "Warning",
-                                textBody:
-                                    "Password and Confirm password do not match",
-                                titleStyle: { color: "black" },
-                                autoClose: true,
-                            });
-                            return;
-                        }
                         await signUp(
                             fullName,
                             email,
@@ -130,13 +125,34 @@ const SignUp = () => {
                             ("/(auth)/verifyEmail/" + email) as Href
                         );
                     } catch (error: any) {
-                        Toast.show({
-                            type: ALERT_TYPE.WARNING,
-                            title: "Warning",
-                            textBody: error.messages[0],
-                            titleStyle: { color: "black" },
-                            autoClose: true,
-                        });
+                        const errorDetail = error.errors;
+                        if (errorDetail.fullname) {
+                            Toast.show({
+                                type: ALERT_TYPE.WARNING,
+                                title: "Warning",
+                                textBody: error.errors.fullname[0],
+                                titleStyle: { color: "black" },
+                                autoClose: true,
+                            });
+                        }
+                        if (errorDetail.email) {
+                            Toast.show({
+                                type: ALERT_TYPE.WARNING,
+                                title: "Warning",
+                                textBody: error.errors.email[0],
+                                titleStyle: { color: "black" },
+                                autoClose: true,
+                            });
+                        }
+                        if (errorDetail.password) {
+                            Toast.show({
+                                type: ALERT_TYPE.WARNING,
+                                title: "Warning",
+                                textBody: error.errors.password[0],
+                                titleStyle: { color: "black" },
+                                autoClose: true,
+                            });
+                        }
                     }
                 }}
                 type="primary"

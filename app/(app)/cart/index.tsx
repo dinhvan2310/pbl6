@@ -1,6 +1,7 @@
-import { getCartApi, updateCartApi } from "@/apis/cart";
+import { deleteCardApi, getCartApi, updateCartApi } from "@/apis/cart";
 import Button from "@/components/button/Button";
 import CartCard from "@/components/cartCard/CartCard";
+import CheckBox from "@/components/checkBox/CheckBox";
 import Row from "@/components/row/Row";
 import Space from "@/components/space/Space";
 import ThemeText from "@/components/themeText/ThemeText";
@@ -11,12 +12,14 @@ import { router } from "expo-router";
 import { Back } from "iconsax-react-native";
 import React, { useEffect } from "react";
 import { View } from "react-native";
-import { ALERT_TYPE, Toast } from "react-native-alert-notification";
+import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
 import { FlatList } from "react-native-gesture-handler";
 
 const Card = () => {
     const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
     const [checkedList, setCheckedList] = React.useState<number[]>([]);
+
+    const [isCheckedAll, setIsCheckedAll] = React.useState(true);
 
     useEffect(() => {
         (async () => {
@@ -68,9 +71,53 @@ const Card = () => {
                     }}
                 />
 
-                <ThemeText text="Card" type="title" />
+                <ThemeText text="Cart" type="title" />
 
-                <Button type="outline" text="Delete" onPress={() => {}} />
+                <Button
+                    type="outline"
+                    text="Delete"
+                    onPress={() => {
+                        Dialog.show({
+                            type: ALERT_TYPE.DANGER,
+                            closeOnOverlayTap: true,
+                            title: "Delete",
+                            textBody: "Are you sure you want to delete?",
+                            button: "Delete",
+                            autoClose: true,
+                            onPressButton: async () => {
+                                try {
+                                    const cartItemDelete = cartItems.filter(
+                                        (item) => {
+                                            return checkedList.includes(
+                                                item.product_id
+                                            );
+                                        }
+                                    );
+                                    const rs = await deleteCardApi(
+                                        cartItemDelete.map((c) => c.cart_id)
+                                    );
+
+                                    const newCartItems = cartItems.filter(
+                                        (item) => {
+                                            return !checkedList.includes(
+                                                item.product_id
+                                            );
+                                        }
+                                    );
+                                    setCartItems(newCartItems);
+                                } catch (error: any) {
+                                    console.log(error);
+                                    Toast.show({
+                                        title: "Error",
+                                        textBody: error.messages[0],
+                                        type: ALERT_TYPE.DANGER,
+                                        autoClose: true,
+                                    });
+                                }
+                            },
+                        });
+                    }}
+                />
             </Row>
 
             <ThemeView style={{}}>
@@ -147,26 +194,50 @@ const Card = () => {
                         backgroundColor: useThemeColor({}, "itemBackground"),
                     }}
                 >
-                    <View>
-                        <ThemeText text="Total" type="medium" />
-                        <ThemeText
-                            text={`${caculateTotal()} vnd`}
-                            type="large"
-                            style={{
-                                fontWeight: "bold",
-                                fontSize: 24,
-                            }}
-                        />
-                    </View>
-                    <Button
-                        type="primary"
-                        text="Checkout"
-                        onPress={() => {}}
-                        style={{
-                            paddingVertical: 12,
-                            paddingHorizontal: 16,
+                    <CheckBox
+                        isChecked={isCheckedAll}
+                        label="All"
+                        checkedChange={(value) => {
+                            setIsCheckedAll(value);
+                            if (value) {
+                                const checkedList: number[] = [];
+                                cartItems.forEach((item) => {
+                                    checkedList.push(item.product_id);
+                                });
+                                setCheckedList(checkedList);
+                            } else {
+                                setCheckedList([]);
+                            }
                         }}
                     />
+                    <Row>
+                        <View
+                            style={{
+                                flexDirection: "column",
+                                alignItems: "flex-end",
+                            }}
+                        >
+                            <ThemeText text="Total" type="medium" />
+                            <ThemeText
+                                text={`${caculateTotal()} vnd`}
+                                type="large"
+                                style={{
+                                    fontWeight: "bold",
+                                    fontSize: 16,
+                                }}
+                            />
+                        </View>
+                        <Space size={{ width: 16, height: 0 }} />
+                        <Button
+                            type="primary"
+                            text="Checkout"
+                            onPress={() => {}}
+                            style={{
+                                paddingVertical: 12,
+                                paddingHorizontal: 16,
+                            }}
+                        />
+                    </Row>
                 </Row>
             </ThemeView>
         </View>

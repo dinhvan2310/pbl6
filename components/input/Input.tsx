@@ -10,7 +10,7 @@ interface InputProps {
 
     disabled?: boolean;
 
-    onChangeText: (text: string) => void;
+    onChangeText?: (text: string) => void;
 }
 
 const Input = ({

@@ -1,5 +1,4 @@
 import httpRequests from "@/utils/httpRequest"
-import { ImagePickerAsset } from "expo-image-picker"
 
 export const getProfileCurrentUser = async () => {
     const response = await httpRequests.get("/user/profile")
@@ -36,5 +35,37 @@ export const updateProfileCurrentUser = async (
 
 export const getAllAddress = async () => {
     const response = await httpRequests.get("/receiver-address")
+    return response
+}
+
+export const addAddress = async (
+    receiver_name: string,
+    receiver_phone: string,
+    receiver_address: string,
+) => {
+    const response = await httpRequests.post("/receiver-address/add", {
+        receiver_name: receiver_name,
+        receiver_phone: receiver_phone,
+        receiver_address: receiver_address,
+    })
+    return response
+}
+
+export const deleteAddress = async (receiver_address_id: number) => {
+    const response = await httpRequests.delete(`/receiver-address/delete/${receiver_address_id}`)
+    return response
+}
+
+export const updateAddress = async (
+    receiver_address_id: number,
+    receiver_name: string,
+    receiver_phone: string,
+    receiver_address: string,
+) => {
+    const response = await httpRequests.post(`/receiver-address/update/${receiver_address_id}`, {
+        receiver_name: receiver_name,
+        receiver_phone: receiver_phone,
+        receiver_address: receiver_address,
+    })
     return response
 }

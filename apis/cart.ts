@@ -17,3 +17,8 @@ export const updateCartApi = async (productId: number, cartQuantity: number) => 
     const response = await httpRequests.post(`/cart/update`, { cart_quantity: cartQuantity, product_id: productId })
     return response
 }
+
+export const deleteCardApi = async (productIds: number[]) => {
+    const response = await httpRequests.post(`/cart/delete-many`, { ids_cart: productIds })
+    return response
+}

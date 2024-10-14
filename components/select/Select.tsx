@@ -1,26 +1,36 @@
-import { View, Text, ViewStyle, TouchableOpacity } from "react-native";
-import React from "react";
-import ThemeText from "../themeText/ThemeText";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import Row from "../row/Row";
 import { ArrowDown2 } from "iconsax-react-native";
-import { FlatList } from "react-native-gesture-handler";
+import React from "react";
+import { Text, TouchableOpacity, View, ViewStyle } from "react-native";
+import Row from "../row/Row";
+import ThemeText from "../themeText/ThemeText";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
 
 export interface OptionType {
     label: string;
     value: string;
 }
 
-export interface SelectProps {
+interface SelectProps {
     label?: string;
     options: OptionType[];
-    value: string;
+    value?: string;
     onChange: (value: string) => void;
+    placeHolder?: string;
 
     style?: ViewStyle;
+    numsOfVisibleItems?: number;
 }
 
-const Select = ({ options, value, onChange, label, style }: SelectProps) => {
+const Select = ({
+    options,
+    value,
+    onChange,
+    label,
+    style,
+    numsOfVisibleItems,
+    placeHolder,
+}: SelectProps) => {
     const [open, setOpen] = React.useState(false);
 
     const primaryColor = useThemeColor({}, "primary");
@@ -53,7 +63,7 @@ const Select = ({ options, value, onChange, label, style }: SelectProps) => {
                     ...style,
                 }}
             >
-                <TouchableOpacity onPress={() => setOpen(!open)}>
+                <TouchableOpacity onPress={() => setOpen(!open)} style={{}}>
                     <Row
                         justifyContent="space-between"
                         style={{
@@ -63,8 +73,14 @@ const Select = ({ options, value, onChange, label, style }: SelectProps) => {
                         }}
                     >
                         <ThemeText
+                            style={{}}
                             type="medium"
-                            text={options.find((o) => o.value === value)?.label}
+                            text={
+                                !value
+                                    ? placeHolder
+                                    : options.find((opt) => opt.value === value)
+                                          ?.label
+                            }
                         />
                         <ArrowDown2
                             size={20}
@@ -74,31 +90,52 @@ const Select = ({ options, value, onChange, label, style }: SelectProps) => {
                 </TouchableOpacity>
                 {open &&
                     options.length > 0 &&
-                    options.map((option, index) => (
+                    numsOfVisibleItems != undefined && (
+                        <ScrollView
+                            style={{
+                                maxHeight: 52 * numsOfVisibleItems,
+                            }}
+                        >
+                            {options.map((item, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    onPress={() => {
+                                        onChange(item.value);
+                                        setOpen(false);
+                                    }}
+                                    style={{
+                                        backgroundColor: itemBackground,
+                                        padding: 16,
+                                        borderBottomWidth: 1,
+                                        borderBottomColor: borderColor,
+                                    }}
+                                >
+                                    <ThemeText
+                                        type="medium"
+                                        text={item.label}
+                                    />
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    )}
+                {open &&
+                    options.length > 0 &&
+                    numsOfVisibleItems === undefined &&
+                    options.map((item, index) => (
                         <TouchableOpacity
                             key={index}
                             onPress={() => {
-                                onChange(option.value);
+                                onChange(item.value);
                                 setOpen(false);
                             }}
                             style={{
-                                borderColor:
-                                    option.value === value
-                                        ? primaryColor
-                                        : backgroundColor,
                                 backgroundColor: itemBackground,
-                                borderWidth: 1,
-                                borderRadius: 8,
-                                paddingHorizontal: 8,
-                                paddingVertical: 14,
-                                display: "flex",
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "flex-start",
-                                position: "relative",
+                                padding: 16,
+                                borderBottomWidth: 1,
+                                borderBottomColor: borderColor,
                             }}
                         >
-                            <ThemeText type="medium" text={option.label} />
+                            <ThemeText type="medium" text={item.label} />
                         </TouchableOpacity>
                     ))}
             </View>

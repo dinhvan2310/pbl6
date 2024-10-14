@@ -11,6 +11,7 @@ import {
 import Row from "../row/Row";
 import Space from "../space/Space";
 import ThemeText from "../themeText/ThemeText";
+import CheckBox from "../checkBox/CheckBox";
 
 interface CartCardProps {
     onPress?: () => void;
@@ -83,27 +84,10 @@ const CartCard = ({
                                 width: "84%",
                             }}
                         />
-                        <TouchableOpacity
-                            style={{
-                                padding: 8,
-                                borderRadius: 4,
-                            }}
-                            onPress={() => {
-                                checkedChange?.(!isChecked);
-                            }}
-                        >
-                            {isChecked ? (
-                                <TickSquare
-                                    size={20}
-                                    color={useThemeColor({}, "primary")}
-                                />
-                            ) : (
-                                <Maximize2
-                                    size={20}
-                                    color={useThemeColor({}, "icon")}
-                                />
-                            )}
-                        </TouchableOpacity>
+                        <CheckBox
+                            isChecked={isChecked}
+                            checkedChange={checkedChange}
+                        />
                     </Row>
                     <Row justifyContent="space-between">
                         <ThemeText text={`$${cartPrice}`} type="medium" />

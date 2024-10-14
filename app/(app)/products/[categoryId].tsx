@@ -12,6 +12,7 @@ import ThemeText from "@/components/themeText/ThemeText";
 import ThemeView from "@/components/themeView/ThemeView";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { CategoryType } from "@/type/categoryType";
+import { ProductType } from "@/type/productType";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Href, router, useLocalSearchParams } from "expo-router";
 import {
