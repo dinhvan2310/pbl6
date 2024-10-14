@@ -34,6 +34,8 @@ const PersonalInfomation = () => {
         })();
     }, []);
 
+    const [isLoading, setIsLoading] = React.useState(false);
+
     const [fullName, setFullName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [gender, setGender] = React.useState("");
@@ -61,6 +63,7 @@ const PersonalInfomation = () => {
 
     const handleSaveChange = async () => {
         try {
+            setIsLoading(true);
             await updateProfileCurrentUser(
                 fullName,
                 phone,
@@ -76,6 +79,7 @@ const PersonalInfomation = () => {
                 titleStyle: { color: "black" },
                 autoClose: true,
             });
+            setIsLoading(false);
         } catch (error: any) {
             Toast.show({
                 type: ALERT_TYPE.WARNING,
@@ -84,6 +88,7 @@ const PersonalInfomation = () => {
                 titleStyle: { color: "black" },
                 autoClose: true,
             });
+            setIsLoading(false);
         }
     };
 
@@ -226,6 +231,7 @@ const PersonalInfomation = () => {
                         onPress={() => {
                             handleSaveChange();
                         }}
+                        loading={isLoading}
                     />
                 </View>
             </ThemeView>

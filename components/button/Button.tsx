@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Space from "../space/Space";
 import Row from "../row/Row";
+import LottieView from "lottie-react-native";
 
 interface ButtonProps {
     text?: string;
@@ -11,6 +12,9 @@ interface ButtonProps {
     type: "primary" | "secondary" | "circle" | "outline";
     onPress: () => void;
     style?: ViewStyle;
+
+    disabled?: boolean;
+    loading?: boolean;
 }
 
 const Button = ({
@@ -19,10 +23,13 @@ const Button = ({
     onPress,
     icon,
     style,
+    disabled = false,
+    loading = false,
 }: ButtonProps) => {
     if (type === "circle") {
         return (
             <TouchableOpacity
+                disabled={disabled || loading}
                 onPress={onPress}
                 style={{
                     backgroundColor: "transparent",
@@ -42,6 +49,7 @@ const Button = ({
     if (type === "outline") {
         return (
             <TouchableOpacity
+                disabled={disabled || loading}
                 onPress={onPress}
                 style={{
                     backgroundColor: "transparent",
@@ -73,13 +81,14 @@ const Button = ({
 
     return (
         <TouchableOpacity
+            disabled={disabled || loading}
             onPress={onPress}
             style={{
                 backgroundColor:
                     type === "primary"
                         ? useThemeColor({}, "primary")
                         : useThemeColor({}, "secondary"),
-                padding: 16,
+                padding: loading ? 0 : 16,
                 borderRadius: 8,
                 display: "flex",
                 alignItems: "center",
@@ -87,18 +96,28 @@ const Button = ({
                 ...style,
             }}
         >
-            <Row>
-                {icon && icon}
-                {icon && <Space size={{ width: 8, height: 0 }} />}
-                <Text
-                    style={{
-                        color: type === "primary" ? "#fff" : "#000",
-                        fontSize: 16,
-                    }}
-                >
-                    {text}
-                </Text>
-            </Row>
+            {loading ? (
+                <LottieView
+                    source={require("@/assets/animation/buttonLoading.json")}
+                    autoPlay
+                    loop
+                    resizeMode="contain"
+                    style={{ width: 54, height: 54 }}
+                />
+            ) : (
+                <Row>
+                    {icon && icon}
+                    {icon && <Space size={{ width: 8, height: 0 }} />}
+                    <Text
+                        style={{
+                            color: type === "primary" ? "#fff" : "#000",
+                            fontSize: 16,
+                        }}
+                    >
+                        {text}
+                    </Text>
+                </Row>
+            )}
         </TouchableOpacity>
     );
 };

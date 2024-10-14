@@ -19,7 +19,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.dinhvan111.pbl6"
     },
     "web": {
       "bundler": "metro",
@@ -28,13 +32,20 @@
     },
     "plugins": [
       "expo-router",
-      ["expo-image-picker",
+      [
+        "expo-image-picker",
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
-        }]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "712debd5-6e31-4071-a631-4e62da1dcd1e"
+      }
     }
   }
 }

@@ -21,6 +21,8 @@ import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 const SignIn = () => {
     const { signIn } = useAuth();
 
+    const [isLoading, setIsLoading] = React.useState(false);
+
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
 
@@ -63,8 +65,10 @@ const SignIn = () => {
             <Button
                 text="Sign in"
                 onPress={async () => {
+                    setIsLoading(true);
                     try {
                         await signIn(email, password);
+                        setIsLoading(false);
                     } catch (error: any) {
                         Toast.show({
                             type: ALERT_TYPE.WARNING,
@@ -73,6 +77,7 @@ const SignIn = () => {
                             titleStyle: { color: "black" },
                             autoClose: true,
                         });
+                        setIsLoading(false);
                     }
                 }}
                 type="primary"

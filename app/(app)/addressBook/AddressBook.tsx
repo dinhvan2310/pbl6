@@ -28,6 +28,10 @@ const AddressBook = () => {
     const white = useThemeColor({}, "white");
 
     // state
+    const [isButtonAddLoading, setIsButtonAddLoading] = React.useState(false);
+    const [isButtonUpdateLoading, setIsButtonUpdateLoading] =
+        React.useState(false);
+
     const [provinces, setProvinces] = React.useState<Province[]>([]);
     const [districts, setDistricts] = React.useState<District[]>([]);
     const [wards, setWards] = React.useState<Ward[]>([]);
@@ -137,6 +141,8 @@ const AddressBook = () => {
             return;
         }
 
+        setIsButtonAddLoading(true);
+
         const wardName = wards.find(
             (w) => w.id.toString() === receiverWard
         )?.name;
@@ -157,8 +163,17 @@ const AddressBook = () => {
             );
             bottomSheetRef.current?.close();
             fetchAddressList();
+            setIsButtonAddLoading(false);
+
+            Toast.show({
+                title: "Success",
+                textBody: "Add address successfully",
+                type: ALERT_TYPE.SUCCESS,
+                autoClose: true,
+            });
         } catch (error) {
             console.log(error);
+            setIsButtonAddLoading(false);
         }
     };
 
@@ -173,6 +188,8 @@ const AddressBook = () => {
 
             return;
         }
+
+        setIsButtonUpdateLoading(true);
 
         // call api to add address
         try {
@@ -203,8 +220,17 @@ const AddressBook = () => {
             );
             bottomSheetUpdateRef.current?.close();
             fetchAddressList();
+            setIsButtonUpdateLoading(false);
+
+            Toast.show({
+                title: "Success",
+                textBody: "Update address successfully",
+                type: ALERT_TYPE.SUCCESS,
+                autoClose: true,
+            });
         } catch (error) {
             console.log(error);
+            setIsButtonUpdateLoading(false);
         }
     };
 
@@ -443,6 +469,7 @@ const AddressBook = () => {
                             onPress={() => {
                                 handleAddAddress();
                             }}
+                            loading={isButtonAddLoading}
                         />
                     </View>
                 </BottomSheetScrollView>
@@ -577,6 +604,12 @@ const AddressBook = () => {
                                 );
                                 fetchAddressList();
                                 bottomSheetUpdateRef.current?.close();
+                                Toast.show({
+                                    title: "Success",
+                                    textBody: "Delete address successfully",
+                                    type: ALERT_TYPE.SUCCESS,
+                                    autoClose: true,
+                                });
                             } catch (error) {
                                 console.log(error);
                                 Toast.show({
@@ -623,6 +656,7 @@ const AddressBook = () => {
                             onPress={() => {
                                 handleUpdateAddress();
                             }}
+                            loading={isButtonUpdateLoading}
                         />
                     </View>
                 </BottomSheetScrollView>

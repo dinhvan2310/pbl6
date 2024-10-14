@@ -22,6 +22,8 @@ import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 const SignUp = () => {
     const { signUp } = useAuth();
 
+    const [isLoading, setIsLoading] = React.useState(false);
+
     const [fullName, setFullName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
@@ -103,6 +105,7 @@ const SignUp = () => {
                         });
                         return;
                     }
+
                     if (password !== confirmPassword) {
                         Toast.show({
                             type: ALERT_TYPE.WARNING,
@@ -114,6 +117,8 @@ const SignUp = () => {
                         });
                         return;
                     }
+
+                    setIsLoading(true);
                     try {
                         await signUp(
                             fullName,
@@ -121,6 +126,7 @@ const SignUp = () => {
                             password,
                             confirmPassword
                         );
+                        setIsLoading(false);
                         router.navigate(
                             ("/(auth)/verifyEmail/" + email) as Href
                         );
@@ -153,6 +159,8 @@ const SignUp = () => {
                                 autoClose: true,
                             });
                         }
+
+                        setIsLoading(false);
                     }
                 }}
                 type="primary"
